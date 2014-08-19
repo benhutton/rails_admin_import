@@ -79,12 +79,7 @@ module RailsAdminImport
 
         case opts[:type]
           when :url
-            temp_file = Tempfile.new('foo')
-            begin
-               open(opts[:input]) { |data| temp_file.write data.read }
-            ensure
-               temp_file.close
-            end
+            temp_file = open(opts[:input])
           when :upload
             temp_file = opts[:input].tempfile
           when :raw_text
