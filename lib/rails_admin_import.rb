@@ -84,15 +84,20 @@ module RailsAdmin
                   user: _current_user
                 })
               elsif params[:url]
-                results = @abstract_model.model.rails_admin_import({
-                  input: params[:url],
-                  type: :url,
-                  format: params[:input_format].to_sym,
-                  lookup: params[:update_lookup],
-                  associated_map: associated_map,
-                  role: _attr_accessible_role, 
-                  user: _current_user
-                })
+                if defined?(Sidekiq)
+                  RailsAdminImportWorker.perform_async(params, :url, associated_map, _attr_accessible_role, _current_user.id.to_s, _current_user.class.name, @abstract_model.model.to_s)
+                  results = { :success => ["Worker queued"], :error => [] }
+                else
+                  results = @abstract_model.model.rails_admin_import({
+                    input: params[:url],
+                    type: :url,
+                    format: params[:input_format].to_sym,
+                    lookup: params[:update_lookup],
+                    associated_map: associated_map,
+                    role: _attr_accessible_role, 
+                    user: _current_user
+                  })
+                end
               else
                 results = { :success => [], :error => ["Failed"] }
               end

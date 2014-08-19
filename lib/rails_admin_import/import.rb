@@ -90,7 +90,7 @@ module RailsAdminImport
                temp_file.close
             end
           else
-            return { :success => [], :error => ["You must choose a opts[:type] of: #{this.file_formats_accepted.join(', ')} "] }
+            return { :success => [], :error => ["You must choose a opts[:type] of: #{file_formats_accepted.join(', ')} "] }
           end
 
         if RailsAdminImport.config.logging
